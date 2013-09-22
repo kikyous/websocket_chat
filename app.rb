@@ -6,6 +6,10 @@ require "sinatra/cookies"
 require 'thin'
 require 'cgi/cookie'
 
+require 'action_view'
+
+include ActionView::Helpers::SanitizeHelper
+
 $channel = EM::Channel.new
 
 $histroy = []
@@ -39,6 +43,7 @@ EventMachine.run do
 
       ws.onmessage { |msg|
         send = "<span class='label'>#{username}</span>: #{msg}"
+        send = sanitize send, tags: %w(table th tr td img li strong b span div)
         $channel.push send
         $histroy << send
       }

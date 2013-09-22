@@ -23,7 +23,7 @@
         $('form').removeClass('notconnected');
         $('.emoji-wysiwyg-editor').empty().attr('contenteditable', true);
       }
-      return $('.msg').scrollTop(400);
+      return $('.msg').scrollTop(900000);
     };
     ws.onclose = function() {
       return ws.send("Leaves the chat");

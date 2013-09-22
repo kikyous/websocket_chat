@@ -5,3 +5,4 @@ gem "thin"
 gem "sinatra"
 gem 'sinatra-contrib'
 gem "em-websocket"
+gem 'actionpack'

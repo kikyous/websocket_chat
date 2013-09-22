@@ -18,7 +18,7 @@ jQuery ->
     if $('form').hasClass('notconnected')
       $('form').removeClass('notconnected')
       $('.emoji-wysiwyg-editor').empty().attr('contenteditable',true)
-    $('.msg').scrollTop(400)
+    $('.msg').scrollTop(900000)
 
   ws.onclose = ->
     ws.send("Leaves the chat")
