@@ -5,6 +5,7 @@ require 'slim'
 require 'sinatra/base'
 require "sinatra/cookies"
 require 'thin'
+require 'cgi/cookie'
 
 $channel = EM::Channel.new
 
@@ -13,6 +14,7 @@ EventMachine.run do
   class App < Sinatra::Base
     helpers Sinatra::Cookies
     set :bind, '0.0.0.0'
+    enable :logging
 
     get '/' do
       unless cookies[:name]
@@ -34,11 +36,10 @@ EventMachine.run do
   EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |ws|
     ws.onopen { |handshake|
       sid = $channel.subscribe { |msg| ws.send msg }
-      username = handshake.headers['Cookie'].match(/name=(.+)/)[1]
-
+      username = CGI::Cookie::parse(handshake.headers['Cookie'])['name'].first
 
       ws.onmessage { |msg|
-        send = "#{username}: #{msg}"
+        send = "<span class='label'>#{username}</span>: #{msg}"
         $channel.push send
         $histroy << send
       }

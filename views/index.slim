@@ -19,7 +19,7 @@ html
           tbody
             -$histroy.last(10).each do |h|
               tr
-                td = h
+                td == h
       form
         textarea#msg.input-xlarge placeholder = "Type something…" type = "text"
         div

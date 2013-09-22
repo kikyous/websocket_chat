@@ -199,7 +199,7 @@
 		if (path.length && path.charAt(path.length - 1) !== '/') {
 			path += '/';
 		}
-		return '<img class="emoji" src="' + path + filename + '" alt="' + util.htmlEntities(emoji) + '">';
+		return '<img src="' + path + filename + '" alt="' + util.htmlEntities(emoji) + '">';
 	};
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -279,7 +279,7 @@
 
 	EmojiArea_WYSIWYG.prototype.insert = function(emoji) {
 		var content;
-		var $img = $(EmojiArea.createIcon(emoji));
+		var $img = $(EmojiArea.createIcon(emoji)).addClass('emoji');
 		if ($img[0].attachEvent) {
 			$img[0].attachEvent('onresizestart', function(e) { e.returnValue = false; }, false);
 		}
