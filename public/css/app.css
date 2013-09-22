@@ -1,0 +1,5 @@
+.msg {
+height: 400px;
+overflow: auto;
+position: relative;
+}

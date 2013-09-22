@@ -1,0 +1,32 @@
+doctype html
+html
+  head
+    link href = "/css/bootstrap.css" rel = "stylesheet"
+    link href = "/css/app.css" rel = "stylesheet"
+    link href = "/css/bootstrap-editable.css" rel = "stylesheet"
+  body
+    .navbar
+      .navbar-inner
+        .container
+          .brand
+            Sinatra Chat
+    .container
+      i class="icon-user"
+      a#username=cookies[:name]
+      .msg
+        table#chat.table
+          tbody
+            -$histroy.last(10).each do |h|
+              tr
+                td = h
+      form.form-stacked
+        .form-actions
+          .control-group
+            textarea#msg.input-xlarge placeholder = "Type something…" type = "text"
+          div
+            input#send.btn type = "submit" value = "Send"
+            input#clear.btn type = "button" value = "Clear Chat"
+    script src = "http://code.jquery.com/jquery-1.7.2.min.js"
+    script src = "/js/bootstrap.js"
+    script src = "/js/bootstrap-editable.min.js"
+    script src = "/js/app.js"
