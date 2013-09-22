@@ -34,6 +34,10 @@ EventMachine.run do
       cookies[:name] = params[:value]
       halt 200
     end
+
+    get 'admin' do
+      slim :admin
+    end
   end
 
   EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |ws|
@@ -43,7 +47,7 @@ EventMachine.run do
 
       ws.onmessage { |msg|
         send = "<span class='label'>#{username}</span>: #{msg}"
-        send = sanitize send, tags: %w(table th tr td img li strong b span div)
+        send = sanitize send, tags: %w(table th tr td img li strong b span div a audio video p)
         $channel.push send
         $histroy << send
       }
