@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'em-websocket'
-require 'yajl'
 require 'slim'
 require 'sinatra/base'
 require "sinatra/cookies"
