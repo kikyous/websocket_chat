@@ -15,6 +15,9 @@ jQuery ->
 
   ws.onmessage = (evt)->
     $('#chat tbody').append('<tr><td>' + evt.data + '</td></tr>')
+    if $('form').hasClass('notconnected')
+      $('form').removeClass('notconnected')
+      $('.emoji-wysiwyg-editor').empty().attr('contenteditable',true)
     $('.msg').scrollTop(400)
 
   ws.onclose = ->
@@ -23,16 +26,17 @@ jQuery ->
   ws.onopen = ->
     ws.send("Join the chat")
 
-  $("form").submit (e)->
+  $("#send").click (e)->
+    if $('form').hasClass('notconnected')
+      return false
     if($("#msg").val().length > 0)
       ws.send($(".emoji-wysiwyg-editor").html())
-      $("#msg").val("")
       $(".emoji-wysiwyg-editor").empty()
     return false
 
   $(document).live 'keydown', (e)->
     if e.ctrlKey && e.keyCode == 13
-      $('form').trigger('submit')
+      $('#send').trigger('click')
 
   $("#clear").click ->
     $('#chat tbody tr').remove()

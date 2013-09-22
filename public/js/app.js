@@ -19,6 +19,10 @@
     ws = new WebSocket("ws://0.0.0.0:8080");
     ws.onmessage = function(evt) {
       $('#chat tbody').append('<tr><td>' + evt.data + '</td></tr>');
+      if ($('form').hasClass('notconnected')) {
+        $('form').removeClass('notconnected');
+        $('.emoji-wysiwyg-editor').empty().attr('contenteditable', true);
+      }
       return $('.msg').scrollTop(400);
     };
     ws.onclose = function() {
@@ -27,17 +31,19 @@
     ws.onopen = function() {
       return ws.send("Join the chat");
     };
-    $("form").submit(function(e) {
+    $("#send").click(function(e) {
+      if ($('form').hasClass('notconnected')) {
+        return false;
+      }
       if ($("#msg").val().length > 0) {
         ws.send($(".emoji-wysiwyg-editor").html());
-        $("#msg").val("");
         $(".emoji-wysiwyg-editor").empty();
       }
       return false;
     });
     $(document).live('keydown', function(e) {
       if (e.ctrlKey && e.keyCode === 13) {
-        return $('form').trigger('submit');
+        return $('#send').trigger('click');
       }
     });
     return $("#clear").click(function() {
