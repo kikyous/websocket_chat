@@ -1,3 +1,4 @@
+<!-- author: kikyous@163.com -->
 doctype html
 html
   head
@@ -5,12 +6,12 @@ html
     link href = "/css/app.css" rel = "stylesheet"
     link href = "/css/bootstrap-editable.css" rel = "stylesheet"
     link href = "/css/jquery.emojiarea.css" rel = "stylesheet"
+    title chat-websocket
   body
     .navbar
       .navbar-inner
         .container
-          .brand
-            Sinatra Chat
+          .brand Websocket Chat
     .container
       i class="icon-user"
       a#username=cookies[:name]
@@ -19,14 +20,13 @@ html
           tbody
             -$histroy.last(10).each do |h|
               tr
-                td == h
+                td = h
       form.notconnected
         textarea#msg.input-xlarge placeholder = "Type something…" type = "text" 请稍候，正在建立连接...
         div
           input#send.btn type = "submit" value = "Send(Ctrl+Enter)"
           input#clear.btn type = "button" value = "Clear Chat"
-    script src = "http://code.jquery.com/jquery-1.7.2.min.js"
-    script src = "/js/bootstrap.js"
+    script src = "/js/jquery-1.7.2.min.js"
     script src = "/js/bootstrap-editable.min.js"
     script src = "/js/app.js"
     script src = "/js/jquery.emojiarea.js"
