@@ -44,7 +44,6 @@ EventMachine.run do
       }
 
       ws.onclose {
-        p "CLOSE"
         $channel.unsubscribe(sid)
       }
     }
