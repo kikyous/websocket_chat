@@ -12,6 +12,7 @@ $histroy = []
 EventMachine.run do
   class App < Sinatra::Base
     helpers Sinatra::Cookies
+    set :bind, '0.0.0.0'
 
     get '/' do
       unless cookies[:name]
@@ -33,7 +34,7 @@ EventMachine.run do
   EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |ws|
     ws.onopen { |handshake|
       sid = $channel.subscribe { |msg| ws.send msg }
-      username = handshake.headers['Cookie'].match(/name=(.+?)/)[1]
+      username = handshake.headers['Cookie'].match(/name=(.+)/)[1]
 
 
       ws.onmessage { |msg|

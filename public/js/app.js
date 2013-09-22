@@ -3,6 +3,10 @@
   jQuery(function() {
     var ws;
     $.fn.editable.defaults.mode = 'inline';
+    $('textarea').emojiarea({
+      buttonLabel: '插入表情',
+      buttonPosition: 'before'
+    });
     $('#username').editable({
       type: 'text',
       pk: 1,
@@ -25,8 +29,9 @@
     };
     $("form").submit(function(e) {
       if ($("#msg").val().length > 0) {
-        ws.send($("#msg").val());
+        ws.send($(".emoji-wysiwyg-editor").html());
         $("#msg").val("");
+        $(".emoji-wysiwyg-editor").empty();
       }
       return false;
     });
