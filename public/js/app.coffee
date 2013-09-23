@@ -11,7 +11,7 @@ jQuery ->
   $('#username').on 'save', (e, params)->
     location.reload()
 
-  ws = new WebSocket("ws://0.0.0.0:8080")
+  ws = new WebSocket("ws://0.0.0.0:1438")
 
   ws.onmessage = (evt)->
     $('#chat tbody').append('<tr><td>' + evt.data + '</td></tr>')

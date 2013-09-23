@@ -48,7 +48,7 @@ EventMachine.run do
     end
   end
 
-  EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |ws|
+  EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 1438) do |ws|
     ws.onopen { |handshake|
       define_method :cookie do |key|
         CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
@@ -72,5 +72,5 @@ EventMachine.run do
 
   end
 
-  App.run!({:port => 5000})
+  App.run!({:port => 3360})
 end
