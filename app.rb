@@ -5,14 +5,19 @@ require 'sinatra/base'
 require "sinatra/cookies"
 require 'thin'
 require 'cgi/cookie'
+require 'nokogiri'
 
-require 'action_view'
-
-include ActionView::Helpers::SanitizeHelper
+def _sanitize text
+  x = Nokogiri::XML.fragment text
+  x.css('script').remove
+  x.css('a').each{|a| a['target']='_blank'}
+  x.css('audio,video').each{|m| m.remove_attribute('autoplay')}
+  x.to_s
+end
 
 $channel = {}
-
 $histroy = {}
+
 EventMachine.run do
   class App < Sinatra::Base
     helpers Sinatra::Cookies
@@ -60,7 +65,7 @@ EventMachine.run do
 
       ws.onmessage { |msg|
         send = "<span class='label'>#{username}</span>: #{msg}"
-        send = sanitize send, tags: %w(table th tr td img li strong b span div a audio video p)
+        send = _sanitize send
         channel.push send
         ($histroy[channel_name] ||= []) << send
       }
