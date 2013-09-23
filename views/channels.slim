@@ -12,24 +12,31 @@ html
       .navbar-inner
         .container
           .brand
-            a href='/' websocket chat
+            a href='/' WebsocketChat
+          ul class="nav" role="navigation"
+            li class="dropdown"
+              a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"
+                | Channels
+                b class="caret"
+              ul class="dropdown-menu" role="menu" aria-labelledby="drop1"
+                li role="presentation"
+                  a role="menuitem" tabindex="-1" href="/channel" All channels
+                li role="presentation" class="divider"
+                li role="presentation"
+                  a role="menuitem" tabindex="-1" href="/channel/#{SecureRandom.hex}" New channel
+                li role="presentation"
+                  a role="menuitem" tabindex="-1" href="/channel/_#{SecureRandom.hex}" New private channel
     .container
       i class="icon-user"
       a#username=cookies[:name]
       .msg
         table#chat.table
-          thead
-            tr
-              th
-                | channels 
-                a href="channel/#{SecureRandom.hex}"
-                  <i class="icon-plus"></i>
-                  | new
           tbody
-            -$channel.each do |key,value|
+            -$channel.reject{|key,value|key.start_with? '_'}.each do |key,value|
               tr
                 td
                   -href = key=='/' ? '/' : "/channel/#{key}"
                   a href=href #{key}(#{$channel[key].instance_variable_get('@subs').length}人在线)
-    script src = "http://code.jquery.com/jquery-1.7.2.min.js"
+    script src = "/js/jquery-1.7.2.min.js"
     script src = "/js/bootstrap-editable.min.js"
+    script src = "/js/bootstrap.min.js"
