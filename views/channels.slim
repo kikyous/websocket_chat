@@ -12,24 +12,24 @@ html
       .navbar-inner
         .container
           .brand
-            a href='/channel' channels
+            a href='/' websocket chat
     .container
       i class="icon-user"
       a#username=cookies[:name]
       .msg
         table#chat.table
+          thead
+            tr
+              th
+                | channels 
+                a href="channel/#{SecureRandom.hex}"
+                  <i class="icon-plus"></i>
+                  | new
           tbody
-            -if $histroy[@channel]
-              -$histroy[@channel].last(10).each do |h|
-                tr
-                  td == h
-      form.notconnected
-        textarea#msg.input-xlarge placeholder = "Type something…" type = "text" 请稍候，正在建立连接...
-        div
-          input#send.btn type = "submit" value = "Send(Ctrl+Enter)"
-          input#clear.btn type = "button" value = "Clear Chat"
+            -$channel.each do |key,value|
+              tr
+                td
+                  -href = key=='/' ? '/' : "/channel/#{key}"
+                  a href=href #{key}(#{$channel[key].instance_variable_get('@subs').length}人在线)
     script src = "http://code.jquery.com/jquery-1.7.2.min.js"
     script src = "/js/bootstrap-editable.min.js"
-    script src = "/js/app.js"
-    script src = "/js/jquery.emojiarea.js"
-    script src = "/emoji/basic/emojis.js"
