@@ -27,11 +27,12 @@ jQuery ->
     ws.send("Join the chat")
 
   $("#send").click (e)->
+    editor = $(".emoji-wysiwyg-editor")
     if $('form').hasClass('notconnected')
       return false
-    if($("#msg").val().length > 0)
-      ws.send($(".emoji-wysiwyg-editor").html())
-      $(".emoji-wysiwyg-editor").empty()
+    if(editor.html().length > 0)
+      ws.send(editor.html())
+      editor.empty()
     return false
 
   $(document).live 'keydown', (e)->

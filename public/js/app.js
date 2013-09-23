@@ -32,12 +32,14 @@
       return ws.send("Join the chat");
     };
     $("#send").click(function(e) {
+      var editor;
+      editor = $(".emoji-wysiwyg-editor");
       if ($('form').hasClass('notconnected')) {
         return false;
       }
-      if ($("#msg").val().length > 0) {
-        ws.send($(".emoji-wysiwyg-editor").html());
-        $(".emoji-wysiwyg-editor").empty();
+      if (editor.html().length > 0) {
+        ws.send(editor.html());
+        editor.empty();
       }
       return false;
     });
