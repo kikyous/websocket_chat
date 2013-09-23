@@ -65,8 +65,8 @@ begin
         sid      = channel.subscribe { |msg| ws.send msg }
 
         ws.onmessage { |msg|
-          send = "<span class='label'>#{username}</span>:<div>#{msg}</div>"
-          send = _sanitize send
+          msg = _sanitize msg
+          send = "<span class='label'>#{username}</span>: #{msg}"
           channel.push send
           ($histroy[channel_name] ||= []) << send
         }
