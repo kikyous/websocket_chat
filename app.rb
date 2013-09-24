@@ -8,7 +8,7 @@ require 'cgi/cookie'
 require 'nokogiri'
 
 def _sanitize text
-  x = Nokogiri::XML.fragment text
+  x = Nokogiri::HTML.fragment text
   x.css('script').remove
   x.css('a').each{|a| a['target']='_blank'}
   x.css('audio,video').each{|m| m.remove_attribute('autoplay')}
@@ -18,68 +18,64 @@ end
 $channel = {}
 $histroy = {}
 
-begin
-  EventMachine.run do
-    class App < Sinatra::Base
-      helpers Sinatra::Cookies
-      set :bind, '0.0.0.0'
-      enable :logging
+EventMachine.run do
+  class App < Sinatra::Base
+    helpers Sinatra::Cookies
+    set :bind, '0.0.0.0'
+    enable :logging
 
-      get '/' do
-        @channel = '/'
-        $channel['/'] ||= EM::Channel.new
-        cookies[:channel] = "/"
-        cookies[:name] ||= "guest#{rand(10000..99999)}"
-        slim :index
-      end
-
-      get '/channel/:name' do |name|
-        @channel = name
-        $channel[name] ||= EM::Channel.new
-        cookies[:channel] = @channel
-        slim :index
-      end
-
-      get '/channel' do
-        slim :channels
-      end
-
-      post '/username' do
-        cookies[:name] = params[:value]
-        halt 200
-      end
-
-      get 'admin' do
-        slim :admin
-      end
+    get '/' do
+      @channel = '/'
+      $channel['/'] ||= EM::Channel.new
+      cookies[:channel] = "/"
+      cookies[:name] ||= "guest#{rand(10000..99999)}"
+      slim :index
     end
 
-    EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 1438) do |ws|
-      ws.onopen { |handshake|
-        define_method :cookie do |key|
-          CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
-        end
-        username = cookie('name')
-        channel_name  = cookie('channel')
-        channel  = $channel[channel_name]
-        sid      = channel.subscribe { |msg| ws.send msg }
+    get '/channel/:name' do |name|
+      @channel = name
+      $channel[name] ||= EM::Channel.new
+      cookies[:channel] = @channel
+      slim :index
+    end
 
-        ws.onmessage { |msg|
-          msg = _sanitize msg
-          send = "<span class='label'>#{username}</span>: #{msg}"
-          channel.push send
-          ($histroy[channel_name] ||= []) << send
-        }
+    get '/channel' do
+      slim :channels
+    end
 
-        ws.onclose {
-          channel.unsubscribe(sid)
-        }
+    post '/username' do
+      cookies[:name] = params[:value]
+      halt 200
+    end
+
+    get 'admin' do
+      slim :admin
+    end
+  end
+
+  EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 1438) do |ws|
+    ws.onopen { |handshake|
+      define_method :cookie do |key|
+        CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
+      end
+      username = cookie('name')
+      channel_name  = cookie('channel')
+      channel  = $channel[channel_name]
+      sid      = channel.subscribe { |msg| ws.send msg }
+
+      ws.onmessage { |msg|
+        send = "<tr><td><span class='label'>#{username}</span>: #{msg}</td></tr>"
+        send = _sanitize send
+        channel.push send
+        ($histroy[channel_name] ||= []) << send
       }
 
-    end
+      ws.onclose {
+        channel.unsubscribe(sid)
+      }
+    }
 
-    App.run!({:port => 3360})
   end
-rescue
-  p $channel
+
+  App.run!({:port => 3360})
 end

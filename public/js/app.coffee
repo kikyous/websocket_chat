@@ -14,7 +14,7 @@ jQuery ->
   ws = new WebSocket("ws://0.0.0.0:1438")
 
   ws.onmessage = (evt)->
-    $('#chat tbody').append('<tr><td>' + evt.data + '</td></tr>')
+    $('#chat tbody').append( evt.data )
     if $('form').hasClass('notconnected')
       $('form').removeClass('notconnected')
       $('.emoji-wysiwyg-editor').empty().attr('contenteditable',true)
