@@ -59,8 +59,8 @@ $histroy = {}
 EventMachine.run do
   class App < Sinatra::Base
     helpers Sinatra::Cookies
-    set :bind, '0.0.0.0'
     enable :logging
+    set :protection, :origin_whitelist => ['http://chat.saas.bdfzer.com/']
 
     get '/' do
       channel = '/'
