@@ -64,7 +64,7 @@ EventMachine.run do
       sid      = channel.subscribe { |msg| ws.send msg }
 
       ws.onmessage { |msg|
-        send = "<tr><td><span class='label'>#{username}</span>: #{msg}</td></tr>"
+        send = "<span class='label'>#{username}</span>: #{msg}"
         send = _sanitize send
         channel.push send
         ($histroy[channel_name] ||= []) << send

@@ -18,7 +18,9 @@
     });
     ws = new WebSocket("ws://0.0.0.0:1438");
     ws.onmessage = function(evt) {
-      $('#chat tbody').append(evt.data);
+      console.log(evt);
+      console.log(evt.data);
+      $('#chat tbody').append('<tr><td>' + evt.data + '</td></tr>');
       if ($('form').hasClass('notconnected')) {
         $('form').removeClass('notconnected');
         $('.emoji-wysiwyg-editor').empty().attr('contenteditable', true);
