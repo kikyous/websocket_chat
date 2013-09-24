@@ -32,11 +32,10 @@ html
       .msg
         table#chat.table
           tbody
-            -$channel.reject{|key,value|key.start_with? '_'}.each do |key,value|
+            -Channel.public.each do |name,channel|
               tr
                 td
-                  -href = key=='/' ? '/' : "/channel/#{key}"
-                  a href=href #{key}(#{$channel[key].instance_variable_get('@subs').length}人在线)
+                  a href=channel.path =channel.to_s
     script src = "/js/jquery-1.7.2.min.js"
     script src = "/js/bootstrap-editable.min.js"
     script src = "/js/bootstrap.min.js"

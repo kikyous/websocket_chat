@@ -15,7 +15,45 @@ def _sanitize text
   x.to_s
 end
 
-$channel = {}
+
+class Channel < EM::Channel
+  @@channels = {}
+  attr_accessor :name, :histroy
+
+  def path
+    self.name=='/' ? '/' : "/channel/#{self.name}"
+  end
+
+  def initialize name
+    self.name    = name
+    self.histroy = []
+    super()
+  end
+
+  def secure_push msg
+    msg = _sanitize msg
+    self.push msg
+    self.histroy << msg
+  end
+
+  def to_s
+    "#{name}(#{@subs.length}人在线)"
+  end
+
+  class << self
+    def find_or_init name
+      @@channels[name] ||= new(name)
+    end
+
+    def public
+      @@channels.reject{|key,value| key.start_with? '_'}
+    end
+
+    alias_method :[], :find_or_init
+  end
+  find_or_init '/'
+end
+
 $histroy = {}
 
 EventMachine.run do
@@ -25,17 +63,19 @@ EventMachine.run do
     enable :logging
 
     get '/' do
-      @channel = '/'
-      $channel['/'] ||= EM::Channel.new
-      cookies[:channel] = "/"
+      channel = '/'
+      cookies[:channel] = channel
       cookies[:name] ||= "guest#{rand(10000..99999)}"
+
+      @channel=Channel.find_or_init(channel)
       slim :index
     end
 
     get '/channel/:name' do |name|
-      @channel = name
-      $channel[name] ||= EM::Channel.new
-      cookies[:channel] = @channel
+      channel = name
+      cookies[:channel] = channel
+
+      @channel = Channel.find_or_init channel
       slim :index
     end
 
@@ -58,16 +98,14 @@ EventMachine.run do
       define_method :cookie do |key|
         CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
       end
-      username = cookie('name')
-      channel_name  = cookie('channel')
-      channel  = $channel[channel_name]
-      sid      = channel.subscribe { |msg| ws.send msg }
+      username     = cookie('name')
+      channel_name = cookie('channel')
+      channel      = Channel.find_or_init channel_name
+      sid          = channel.subscribe { |msg| ws.send msg }
 
       ws.onmessage { |msg|
         send = "<span class='label'>#{username}</span>: #{msg}"
-        send = _sanitize send
-        channel.push send
-        ($histroy[channel_name] ||= []) << send
+        channel.secure_push send
       }
 
       ws.onclose {

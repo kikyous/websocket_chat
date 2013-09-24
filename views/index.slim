@@ -32,10 +32,9 @@ html
       .msg
         table#chat.table
           tbody
-            -if $histroy[@channel]
-              -$histroy[@channel].last(10).each do |h|
-                tr
-                  td == h
+            -@channel.histroy.last(10).each do |h|
+              tr
+                td == h
       form.notconnected
         textarea#msg.input-xlarge placeholder = "Type something…" type = "text" 请稍候，正在建立连接...
         div
