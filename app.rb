@@ -41,8 +41,8 @@ class Channel < EM::Channel
   end
 
   class << self
-    def find_or_init name
-      @@channels[name] ||= new(name)
+    def find_or_init channel
+      @@channels[channel] ||= new(channel)
     end
 
     def public
@@ -60,7 +60,6 @@ EventMachine.run do
   class App < Sinatra::Base
     helpers Sinatra::Cookies
     enable :logging
-    set :protection, :origin_whitelist => ['http://chat.saas.bdfzer.com/']
 
     get '/' do
       channel = '/'

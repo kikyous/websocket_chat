@@ -15,24 +15,24 @@ jQuery ->
 
   ws.onmessage = (evt)->
     $('#chat tbody').append('<tr><td>' + evt.data + '</td></tr>')
-    if $('form').hasClass('notconnected')
-      $('form').removeClass('notconnected')
-      $('.emoji-wysiwyg-editor').empty().attr('contenteditable',true)
     $('.msg').scrollTop(900000)
 
   ws.onclose = ->
+    dialog('连接已断开，请刷新页面')
     ws.send("Leaves the chat")
 
   ws.onopen = ->
+    $('.emoji-wysiwyg-editor').empty().attr('contenteditable',true)
     ws.send("Join the chat")
 
   $("#send").click (e)->
-    editor = $(".emoji-wysiwyg-editor")
-    if $('form').hasClass('notconnected')
-      return false
-    if(editor.html().length > 0)
-      ws.send(editor.html())
-      editor.empty()
+    if ws.readyState != WebSocket.OPEN
+      dialog('连接已断开，请刷新页面')
+    else
+      editor = $(".emoji-wysiwyg-editor")
+      if(editor.html().length > 0)
+        ws.send(editor.html())
+        editor.empty()
     return false
 
   $(document).live 'keydown', (e)->
@@ -41,3 +41,22 @@ jQuery ->
 
   $("#clear").click ->
     $('#chat tbody tr').remove()
+
+  $(document).on 'hidden', '#modal', ->
+    $(@).remove()
+
+  dialog = (msg)->
+    html = "<div id='modal' class='modal hide fade'>
+    <div class='modal-header'> <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+    <h3>WebSocketChat</h3>
+    </div>
+    <div class='modal-body'>
+      <p>#{msg}</p>
+    </div>
+    <div class='modal-footer'>
+      <a href='#' aria-hidden='true' data-dismiss='modal' class='btn'>关闭</a>
+      <a href='#' class='btn btn-primary' onclick='location.reload()'>确认</a>
+    </div>
+    </div>"
+    $('body').append(html)
+    $('#modal').modal('show')

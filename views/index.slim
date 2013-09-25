@@ -1,48 +1,15 @@
-<!-- author: kikyous@163.com -->
-doctype html
-html
-  head
-    link href = "/css/bootstrap.css" rel = "stylesheet"
-    link href = "/css/app.css" rel = "stylesheet"
-    link href = "/css/bootstrap-editable.css" rel = "stylesheet"
-    link href = "/css/jquery.emojiarea.css" rel = "stylesheet"
-    title chat-websocket
-  body
-    .navbar
-      .navbar-inner
-        .container
-          .brand
-            a href='/' WebsocketChat
-          ul class="nav" role="navigation"
-            li class="dropdown"
-              a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"
-                | Channels
-                b class="caret"
-              ul class="dropdown-menu" role="menu" aria-labelledby="drop1"
-                li role="presentation"
-                  a role="menuitem" tabindex="-1" href="/channel" All channels
-                li role="presentation" class="divider"
-                li role="presentation"
-                  a role="menuitem" tabindex="-1" href="/channel/#{SecureRandom.hex}" New channel
-                li role="presentation"
-                  a role="menuitem" tabindex="-1" href="/channel/_#{SecureRandom.hex}" New private channel
-    .container
-      i class="icon-user"
-      a#username=cookies[:name]
-      .msg
-        table#chat.table
-          tbody
-            -@channel.histroy.last(10).each do |h|
-              tr
-                td == h
-      form.notconnected
-        textarea#msg.input-xlarge placeholder = "Type something…" type = "text" 请稍候，正在建立连接...
-        div
-          input#send.btn type = "submit" value = "Send(Ctrl+Enter)"
-          input#clear.btn type = "button" value = "Clear Chat"
-    script src = "/js/jquery-1.7.2.min.js"
-    script src = "/js/bootstrap.min.js"
-    script src = "/js/bootstrap-editable.min.js"
-    script src = "/js/app.js"
-    script src = "/js/jquery.emojiarea.js"
-    script src = "/emoji/basic/emojis.js"
+i class="icon-user"
+a#username=cookies[:name]
+.msg
+  table#chat.table
+    tbody
+      -@channel.histroy.last(10).each do |h|
+        tr
+          td == h
+form
+  textarea#msg.input-xlarge type = "text" 请稍候，正在建立连接...
+  div
+    input#send.btn type = "submit" value = "Send(Ctrl+Enter)"
+    input#clear.btn type = "button" value = "Clear Chat"
+
+script src = "/js/app.js"
