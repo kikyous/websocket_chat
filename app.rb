@@ -40,7 +40,7 @@ class Channel < EM::Channel
   def secure_push title, content
     title   = _sanitize title
     content = _sanitize content
-    msg = "<dl><dt>#{title} #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</dt><dd>#{content}</dd></dl>"
+    msg = "<dl><dt><span class='badge badge-success'>#{title} #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</span></dt><dd>#{content}</dd></dl>"
     self.push msg
     self.histroy << msg
   end
