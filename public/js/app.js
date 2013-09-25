@@ -26,7 +26,9 @@
       return ws.send("Leaves the chat");
     };
     ws.onopen = function() {
-      $('.emoji-wysiwyg-editor').empty().attr('contenteditable', true);
+      var editor;
+      editor = $(".emoji-wysiwyg-editor:last");
+      editor.empty().attr('contenteditable', true);
       return ws.send("Join the chat");
     };
     $("#send").click(function(e) {
@@ -34,7 +36,7 @@
       if (ws.readyState !== WebSocket.OPEN) {
         dialog('连接已断开，请刷新页面');
       } else {
-        editor = $(".emoji-wysiwyg-editor");
+        editor = $(".emoji-wysiwyg-editor:last");
         if (editor.html().length > 0) {
           ws.send(editor.html());
           editor.empty();
