@@ -13,7 +13,7 @@
 .emoji-menu {
 	position: absolute;
 	z-index: 999;
-	width: 180px;
+	width: 577px;
 	/* margin-left: -100px; */
 	padding: 0;
 	-webkit-box-sizing: border-box;
@@ -21,7 +21,7 @@
 	box-sizing: border-box;
 }
 .emoji-menu > div {
-	max-height: 200px;
+	max-height: 215px;
 	overflow: hidden;
 	background: #fff;
 	-webkit-border-radius: 3px;

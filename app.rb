@@ -87,8 +87,9 @@ EventMachine.run do
       halt 200
     end
 
-    get 'admin' do
-      slim :admin
+    get '/admin/:name' do |name|
+      Channel[name].secure_push 'jjjjjjjj'
+      'jjjjjjjj'
     end
   end
 

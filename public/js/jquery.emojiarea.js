@@ -418,7 +418,7 @@
 	EmojiMenu.prototype.reposition = function() {
 		var $button = this.emojiarea.$button;
 		var offset = $button.offset();
-		offset.top += $button.outerHeight();
+		offset.top -= 215;
 		offset.left += Math.round($button.outerWidth() / 2);
 		
 		this.$menu.css({
