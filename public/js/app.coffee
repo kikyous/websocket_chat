@@ -14,7 +14,7 @@ jQuery ->
   ws = new WebSocket("ws://0.0.0.0:1438")
 
   ws.onmessage = (evt)->
-    $('#chat tbody').append('<tr><td>' + evt.data + '</td></tr>')
+    $('#chat tbody:first').append('<tr><td>' + evt.data + '</td></tr>')
     $('.msg').scrollTop(900000)
 
   ws.onclose = ->
