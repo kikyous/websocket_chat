@@ -54,8 +54,6 @@ class Channel < EM::Channel
   find_or_init '/'
 end
 
-$histroy = {}
-
 EventMachine.run do
   class App < Sinatra::Base
     helpers Sinatra::Cookies
