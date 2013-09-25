@@ -15,6 +15,13 @@ def _sanitize text
   x.to_s
 end
 
+class Histroy
+  attr_accessor :title, :content
+  def initialize(title, content)
+    self.title   = title
+    self.content = content
+  end
+end
 
 class Channel < EM::Channel
   @@channels = {}
@@ -30,8 +37,10 @@ class Channel < EM::Channel
     super()
   end
 
-  def secure_push msg
-    msg = _sanitize msg
+  def secure_push title, content
+    title   = _sanitize title
+    content = _sanitize content
+    msg = "<dl><dt>#{title} #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</dt><dd>#{content}</dd></dl>"
     self.push msg
     self.histroy << msg
   end
@@ -102,8 +111,7 @@ EventMachine.run do
       sid          = channel.subscribe { |msg| ws.send msg }
 
       ws.onmessage { |msg|
-        send = "<span class='label'>#{username}</span>: #{msg}"
-        channel.secure_push send
+        channel.secure_push username, msg
       }
 
       ws.onclose {

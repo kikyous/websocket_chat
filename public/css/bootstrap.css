@@ -857,7 +857,9 @@ dd {
 }
 
 dt {
-  font-weight: bold;
+  color: #008000;
+  overflow: hidden;
+  zoom: 1;
 }
 
 dd {

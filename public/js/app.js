@@ -18,8 +18,7 @@
     });
     ws = new WebSocket("ws://0.0.0.0:1438");
     ws.onmessage = function(evt) {
-      $('#chat tbody:first').append('<tr><td>' + evt.data + '</td></tr>');
-      return $('.msg').scrollTop(900000);
+      return $('#chat').append(evt.data).scrollTop(900000);
     };
     ws.onclose = function() {
       dialog('连接已断开，请刷新页面');
@@ -50,7 +49,7 @@
       }
     });
     $("#clear").click(function() {
-      return $('#chat tbody tr').remove();
+      return $('#chat dl').remove();
     });
     $(document).on('hidden', '#modal', function() {
       return $(this).remove();

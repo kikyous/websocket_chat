@@ -14,8 +14,7 @@ jQuery ->
   ws = new WebSocket("ws://0.0.0.0:1438")
 
   ws.onmessage = (evt)->
-    $('#chat tbody:first').append('<tr><td>' + evt.data + '</td></tr>')
-    $('.msg').scrollTop(900000)
+    $('#chat').append( evt.data ).scrollTop(900000)
 
   ws.onclose = ->
     dialog('连接已断开，请刷新页面')
@@ -41,7 +40,7 @@ jQuery ->
       $('#send').trigger('click')
 
   $("#clear").click ->
-    $('#chat tbody tr').remove()
+    $('#chat dl').remove()
 
   $(document).on 'hidden', '#modal', ->
     $(@).remove()
