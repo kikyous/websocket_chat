@@ -15,14 +15,6 @@ def _sanitize text
   x.to_s
 end
 
-class Histroy
-  attr_accessor :title, :content
-  def initialize(title, content)
-    self.title   = title
-    self.content = content
-  end
-end
-
 class Channel < EM::Channel
   @@channels = {}
   attr_accessor :name, :histroy
@@ -38,9 +30,8 @@ class Channel < EM::Channel
   end
 
   def secure_push title, content
-    title   = _sanitize title
-    content = _sanitize content
     msg = "<dl><dt><span class='badge badge-success'>#{title} #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</span></dt><dd>#{content}</dd></dl>"
+    msg = _sanitize msg
     self.push msg
     self.histroy << msg
   end
@@ -66,6 +57,7 @@ end
 EventMachine.run do
   class App < Sinatra::Base
     helpers Sinatra::Cookies
+    set :cookie_options, :expires => Time.now + 3600*24*30
     enable :logging
 
     get '/' do
