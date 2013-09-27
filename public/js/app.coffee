@@ -23,17 +23,26 @@ jQuery ->
   ws.onopen = ->
     editor = $(".emoji-wysiwyg-editor:last")
     editor.empty().attr('contenteditable',true)
-    ws.send("Join the chat")
+    send_msg("Join the chat")
+
+  message = (title, content)->
+    time = moment().format("YYYY-MM-DD HH:mm:ss")
+    "<dl><dt><span class='badge badge-success'>#{title} #{time}</span></dt><dd>#{content}</dd></dl>"
 
   $("#send").click (e)->
+    editor = $(".emoji-wysiwyg-editor:last")
+    send_msg(editor.html())
+    editor.empty()
+    false
+
+  send_msg = (text)->
     if ws.readyState != WebSocket.OPEN
       dialog('连接已断开，请刷新页面')
     else
-      editor = $(".emoji-wysiwyg-editor:last")
-      if(editor.html().length > 0)
-        ws.send(editor.html())
-        editor.empty()
-    return false
+      if(text.length > 0)
+        $('#chat').append(message $('#username').text(), text)
+        ws.send(text)
+        $('#chat').scrollTop(900000)
 
   $(document).live 'keydown', (e)->
     if e.ctrlKey && e.keyCode == 13

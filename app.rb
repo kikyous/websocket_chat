@@ -17,7 +17,7 @@ end
 
 class Channel < EM::Channel
   @@channels = {}
-  attr_accessor :name, :histroy
+  attr_accessor :name, :histroy, :current_sub
 
   def path
     self.name=='/' ? '/' : "/channel/#{self.name}"
@@ -29,10 +29,19 @@ class Channel < EM::Channel
     super()
   end
 
+  def other_subs
+    @subs.reject{|sid| sid== self.current_sub}
+  end
+
+  def send(*item)
+    item = item.dup
+    EM.schedule { item.each { |i| other_subs.values.each { |s| s.call i } } }
+  end
+
   def secure_push title, content
-    msg = "<dl><dt><span class='badge badge-success'>#{title} #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</span></dt><dd>#{content}</dd></dl>"
+    msg = "<dl><dt><span class='badge'>#{title} #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</span></dt><dd>#{content}</dd></dl>"
     msg = _sanitize msg
-    self.push msg
+    self.send msg
     self.histroy << msg
   end
 
@@ -103,6 +112,7 @@ EventMachine.run do
       sid          = channel.subscribe { |msg| ws.send msg }
 
       ws.onmessage { |msg|
+        channel.current_sub = sid
         channel.secure_push username, msg
       }
 

@@ -2,8 +2,7 @@ i class="icon-user"
 a#username=cookies[:name]
 #chat.msg
   -@channel.histroy.last(10).each do |h|
-    dl
-      td == h
+    dl== h
 form
   textarea#msg.input-xlarge type = "text" 请稍候，正在建立连接...
   div
