@@ -1,5 +1,5 @@
 i class="icon-user"
-a#username=cookies[:name]
+a#username=session[:name]
 #chat.msg
   -@channel.histroy.last(10).each do |h|
     dl== h

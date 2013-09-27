@@ -7,9 +7,12 @@ require 'thin'
 require 'cgi/cookie'
 require 'nokogiri'
 
+COOKIE_KEY = 'rack.session'
+COOKIE_SECRET = '*&(^B234312341234'
+
 def _sanitize text
   x = Nokogiri::HTML.fragment text
-  x.css('script').remove
+  x.css('script,iframe').remove
   x.css('a').each{|a| a['target']='_blank'}
   x.css('audio,video').each{|m| m.remove_attribute('autoplay')}
   x.to_s
@@ -60,19 +63,20 @@ class Channel < EM::Channel
 
     alias_method :[], :find_or_init
   end
-  find_or_init '/'
 end
 
 EventMachine.run do
   class App < Sinatra::Base
-    helpers Sinatra::Cookies
-    set :cookie_options, :expires => Time.now + 3600*24*30
     enable :logging
+    use Rack::Session::Cookie,  :key => COOKIE_KEY,
+      :path => '/',
+      :expire_after => 2592000, #30 days
+      :secret => COOKIE_SECRET
 
     get '/' do
       channel = '/'
-      cookies[:channel] = channel
-      cookies[:name] ||= "guest#{rand(10000..99999)}"
+      session[:channel] = channel
+      session[:name] ||= "guest#{rand(10000..99999)}"
 
       @channel=Channel.find_or_init(channel)
       slim :index
@@ -80,7 +84,7 @@ EventMachine.run do
 
     get '/channel/:name' do |name|
       channel = name
-      cookies[:channel] = channel
+      session[:channel] = channel
 
       @channel = Channel.find_or_init channel
       slim :index
@@ -91,14 +95,10 @@ EventMachine.run do
     end
 
     post '/username' do
-      cookies[:name] = params[:value]
+      session[:name] = params[:value]
       halt 200
     end
 
-    get '/admin/:name' do |name|
-      Channel[name].secure_push 'jjjjjjjj'
-      'jjjjjjjj'
-    end
   end
 
   EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 1438) do |ws|
@@ -106,8 +106,11 @@ EventMachine.run do
       define_method :cookie do |key|
         CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
       end
-      username     = cookie('name')
-      channel_name = cookie('channel')
+      rack_cookie = Rack::Session::Cookie.new(App)
+      bakesale     = cookie 'rack.session'
+      session      = rack_cookie.coder.decode(Rack::Utils.unescape(bakesale))
+      username     = session['name']
+      channel_name = session['channel']
       channel      = Channel.find_or_init channel_name
       sid          = channel.subscribe { |msg| ws.send msg }
 
