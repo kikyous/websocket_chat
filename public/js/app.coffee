@@ -69,3 +69,14 @@ jQuery ->
     </div>"
     $('body').append(html)
     $('#modal').modal('show')
+
+  $('#fileselect').on 'change', ->
+    UploadFile()
+  UploadFile = ->
+    xhr = new XMLHttpRequest()
+    file = document.getElementById('fileselect').files[0]
+    console.log file
+    if (xhr.upload && file.type == "image/jpeg")
+      xhr.open("POST", '/upload', true)
+      xhr.setRequestHeader("X_FILENAME", file.name)
+      xhr.send(file)

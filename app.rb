@@ -1,11 +1,16 @@
-require 'rubygems'
-require 'em-websocket'
 require 'slim'
 require 'sinatra/base'
-require "sinatra/cookies"
 require 'thin'
 require 'cgi/cookie'
 require 'nokogiri'
+require 'em-websocket'
+require './lib/uploader'
+require "sinatra/activerecord"
+require 'carrierwave'
+require 'carrierwave/orm/activerecord'
+require './model/message'
+
+require 'pry'
 
 COOKIE_KEY = 'rack.session'
 COOKIE_SECRET = '*&(^B234312341234'
@@ -65,66 +70,45 @@ class Channel < EM::Channel
   end
 end
 
-EventMachine.run do
-  class App < Sinatra::Base
-    enable :logging
-    use Rack::Session::Cookie,  :key => COOKIE_KEY,
-      :path => '/',
-      :expire_after => 2592000, #30 days
-      :secret => COOKIE_SECRET
+class App < Sinatra::Base
+  register Sinatra::ActiveRecordExtension
+  set :database, "sqlite3:///app.sqlite3"
+  enable :logging
+  use Rack::Session::Cookie,  :key => COOKIE_KEY,
+    :path => '/',
+    :expire_after => 2592000, #30 days
+    :secret => COOKIE_SECRET
 
-    get '/' do
-      channel = '/'
-      session[:channel] = channel
-      session[:name] ||= "guest#{rand(10000..99999)}"
+  get '/' do
+    channel = '/'
+    session[:channel] = channel
+    session[:name] ||= "guest#{rand(10000..99999)}"
 
-      @channel=Channel.find_or_init(channel)
-      slim :index
-    end
-
-    get '/channel/:name' do |name|
-      channel = name
-      session[:channel] = channel
-
-      @channel = Channel.find_or_init channel
-      slim :index
-    end
-
-    get '/channel' do
-      slim :channels
-    end
-
-    post '/username' do
-      session[:name] = params[:value]
-      halt 200
-    end
-
+    @channel=Channel.find_or_init(channel)
+    slim :index
   end
 
-  EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 1438) do |ws|
-    ws.onopen { |handshake|
-      define_method :cookie do |key|
-        CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
-      end
-      rack_cookie = Rack::Session::Cookie.new(App)
-      bakesale     = cookie 'rack.session'
-      session      = rack_cookie.coder.decode(Rack::Utils.unescape(bakesale))
-      username     = session['name']
-      channel_name = session['channel']
-      channel      = Channel.find_or_init channel_name
-      sid          = channel.subscribe { |msg| ws.send msg }
+  get '/channel/:name' do |name|
+    channel = name
+    session[:channel] = channel
 
-      ws.onmessage { |msg|
-        channel.current_sub = sid
-        channel.secure_push username, msg
-      }
-
-      ws.onclose {
-        channel.unsubscribe(sid)
-      }
-    }
-
+    @channel = Channel.find_or_init channel
+    slim :index
   end
 
-  App.run!({:port => 3360})
+  get '/channel' do
+    slim :channels
+  end
+
+  post '/upload' do
+    uploader = MyUploader.new
+    uploader.store!(params['file'])
+    binding.pry
+  end
+
+  post '/username' do
+    session[:name] = params[:value]
+    halt 200
+  end
+
 end
