@@ -16,7 +16,6 @@ EventMachine.run do
       sid          = channel.subscribe { |msg| ws.send msg }
 
       ws.onmessage { |msg|
-        Message.create(content: msg)
         channel.current_sub = sid
         channel.secure_push username, msg
       }

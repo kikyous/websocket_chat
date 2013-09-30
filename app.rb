@@ -1,5 +1,6 @@
 require 'slim'
 require 'sinatra/base'
+require "sinatra/json"
 require 'thin'
 require 'cgi/cookie'
 require 'nokogiri'
@@ -101,9 +102,9 @@ class App < Sinatra::Base
   end
 
   post '/upload' do
-    uploader = MyUploader.new
-    uploader.store!(params['file'])
-    binding.pry
+    @uploader = MyUploader.new
+    @uploader.store!(params['file'])
+    json url: @uploader.url, name: @uploader.filename, type: @uploader.filename.split('.').last
   end
 
   post '/username' do

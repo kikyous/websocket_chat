@@ -3,10 +3,10 @@
   jQuery(function() {
     var UploadFile, dialog, message, send_msg, ws;
     $.fn.editable.defaults.mode = 'inline';
-    $('textarea').emojiarea({
-      buttonLabel: '插入表情',
-      buttonPosition: 'before'
+    $.extend($.emojiarea.defaults, {
+      button: '#addemoji'
     });
+    $('textarea').emojiarea();
     $('#username').editable({
       type: 'text',
       pk: 1,
@@ -74,15 +74,21 @@
       return UploadFile();
     });
     return UploadFile = function() {
-      var file, xhr;
+      var fd, xhr;
       xhr = new XMLHttpRequest();
-      file = document.getElementById('fileselect').files[0];
-      console.log(file);
-      if (xhr.upload && file.type === "image/jpeg") {
-        xhr.open("POST", '/upload', true);
-        xhr.setRequestHeader("X_FILENAME", file.name);
-        return xhr.send(file);
-      }
+      fd = new FormData(document.getElementById('form'));
+      xhr.onload = function(evt) {
+        var data, elem, _ref;
+        data = JSON.parse(xhr.response);
+        if ((_ref = data.type) === 'jpg' || _ref === 'jpeg' || _ref === 'png' || _ref === 'gif') {
+          elem = "<img src=" + data.url + " />";
+        } else {
+          elem = "<a href=" + data.url + ">" + data.name + "</a>";
+        }
+        return $('.emoji-wysiwyg-editor').append(elem);
+      };
+      xhr.open("POST", '/upload');
+      return xhr.send(fd);
     };
   });
 
