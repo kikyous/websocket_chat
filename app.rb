@@ -5,6 +5,7 @@ require 'thin'
 require 'cgi/cookie'
 require 'nokogiri'
 require 'em-websocket'
+require './lib/uri'
 require './lib/uploader'
 require "sinatra/activerecord"
 require 'carrierwave'

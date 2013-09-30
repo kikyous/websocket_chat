@@ -7,7 +7,8 @@ EventMachine.run do
       define_method :cookie do |key|
         CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
       end
-      rack_cookie = Rack::Session::Cookie.new(App)
+      rack_cookie = Rack::Session::Cookie.new(App, :key => COOKIE_KEY,
+                                              :secret => COOKIE_SECRET)
       bakesale     = cookie 'rack.session'
       session      = rack_cookie.coder.decode(Rack::Utils.unescape(bakesale))
       username     = session['name']
