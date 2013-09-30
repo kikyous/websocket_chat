@@ -76,10 +76,12 @@
         xhr = new XMLHttpRequest();
         fd = new FormData(document.getElementById('form'));
         xhr.onload = function(evt) {
-          var data, elem, _ref;
+          var data, elem, _ref, _ref1;
           data = JSON.parse(xhr.response);
           if ((_ref = data.type) === 'jpg' || _ref === 'jpeg' || _ref === 'png' || _ref === 'gif') {
             elem = "<img src=" + data.url + " />";
+          } else if ((_ref1 = data.type) === 'mp3' || _ref1 === 'aac' || _ref1 === 'ogg') {
+            elem = "<audio controls src=" + data.url + " />";
           } else {
             elem = "<a href=" + data.url + ">" + data.name + "</a>";
           }

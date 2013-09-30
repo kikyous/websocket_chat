@@ -79,6 +79,8 @@ jQuery ->
         data = JSON.parse(xhr.response)
         if data.type in ['jpg','jpeg','png','gif']
           elem = "<img src=#{data.url} />"
+        else if data.type in ['mp3','aac','ogg']
+          elem = "<audio controls src=#{data.url} />"
         else
           elem = "<a href=#{data.url}>#{data.name}</a>"
         $('.emoji-wysiwyg-editor').append(elem)
