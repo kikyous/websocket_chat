@@ -7,10 +7,14 @@ EventMachine.run do
       define_method :cookie do |key|
         CGI::Cookie::parse(handshake.headers['Cookie'])[key].first
       end
-      rack_cookie = Rack::Session::Cookie.new(App, :key => COOKIE_KEY,
-                                              :secret => COOKIE_SECRET)
-      bakesale     = cookie 'rack.session'
-      session      = rack_cookie.coder.decode(Rack::Utils.unescape(bakesale))
+      begin
+        rack_cookie = Rack::Session::Cookie.new(App, :key => COOKIE_KEY,
+                                                :secret => COOKIE_SECRET)
+        bakesale    = cookie 'rack.session'
+        session     = rack_cookie.coder.decode(Rack::Utils.unescape(bakesale))
+      rescue
+        session = {'name'=>'guest', 'channel'=>'/'}
+      end
       username     = session['name']
       channel_name = session['channel']
       channel      = Channel.find_or_init channel_name
