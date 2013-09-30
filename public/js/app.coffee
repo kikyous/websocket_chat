@@ -72,16 +72,15 @@ jQuery ->
     $('#modal').modal('show')
 
   $('#fileselect').on 'change', ->
-    UploadFile()
-  UploadFile = ->
-    xhr = new XMLHttpRequest()
-    fd = new FormData(document.getElementById('form'))
-    xhr.onload = (evt)->
-      data = JSON.parse(xhr.response)
-      if data.type in ['jpg','jpeg','png','gif']
-        elem = "<img src=#{data.url} />"
-      else
-        elem = "<a href=#{data.url}>#{data.name}</a>"
-      $('.emoji-wysiwyg-editor').append(elem)
-    xhr.open("POST", '/upload')
-    xhr.send(fd)
+    if $('#fileselect').val()
+      xhr = new XMLHttpRequest()
+      fd = new FormData(document.getElementById('form'))
+      xhr.onload = (evt)->
+        data = JSON.parse(xhr.response)
+        if data.type in ['jpg','jpeg','png','gif']
+          elem = "<img src=#{data.url} />"
+        else
+          elem = "<a href=#{data.url}>#{data.name}</a>"
+        $('.emoji-wysiwyg-editor').append(elem)
+      xhr.open("POST", '/upload')
+      xhr.send(fd)
