@@ -71,8 +71,13 @@
       return $('#modal').modal('show');
     };
     return $('#fileselect').on('change', function() {
-      var fd, xhr;
+      var date, editor, fd, xhr;
       if ($('#fileselect').val()) {
+        editor = $('.emoji-wysiwyg-editor');
+        date = new Date();
+        date = date.getTime();
+        $('#file-indenter').val(date);
+        editor.append("<img id='file-" + date + "' src='/img/onloading.gif'>");
         xhr = new XMLHttpRequest();
         fd = new FormData(document.getElementById('form'));
         xhr.onload = function(evt) {
@@ -85,7 +90,7 @@
           } else {
             elem = "<a href=" + data.url + ">" + data.name + "</a>";
           }
-          return $('.emoji-wysiwyg-editor').append(elem);
+          return $("#file-" + data.indenter).replaceWith(elem);
         };
         xhr.open("POST", '/upload');
         return xhr.send(fd);

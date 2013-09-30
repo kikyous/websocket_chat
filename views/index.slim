@@ -12,6 +12,7 @@ div class="btn-group"
     | 添加附件
 form id='form' enctype="multipart/form-data" action="upload" method='post'
   input.hide type="file" id="fileselect" name="file"
+  input type='hidden' id='file-indenter' name='file_indenter'
   textarea#msg.input-xlarge type = "text" 请稍候，正在建立连接...
   div
     input#send.btn type = "submit" value = "Send(Ctrl+Enter)"

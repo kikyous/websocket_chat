@@ -73,6 +73,11 @@ jQuery ->
 
   $('#fileselect').on 'change', ->
     if $('#fileselect').val()
+      editor = $('.emoji-wysiwyg-editor')
+      date = new Date()
+      date = date.getTime()
+      $('#file-indenter').val(date)
+      editor.append("<img id='file-#{date}' src='/img/onloading.gif'>")
       xhr = new XMLHttpRequest()
       fd = new FormData(document.getElementById('form'))
       xhr.onload = (evt)->
@@ -83,6 +88,6 @@ jQuery ->
           elem = "<audio controls src=#{data.url} />"
         else
           elem = "<a href=#{data.url}>#{data.name}</a>"
-        $('.emoji-wysiwyg-editor').append(elem)
+        $("#file-#{data.indenter}").replaceWith(elem)
       xhr.open("POST", '/upload')
       xhr.send(fd)

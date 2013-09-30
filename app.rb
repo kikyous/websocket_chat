@@ -104,7 +104,9 @@ class App < Sinatra::Base
   post '/upload' do
     @uploader = MyUploader.new
     @uploader.store!(params['file'])
-    json url: @uploader.url, name: @uploader.filename, type: @uploader.filename.split('.').last
+    json url: @uploader.url, name: @uploader.filename,
+      type: @uploader.filename.split('.').last,
+      indenter: params[:file_indenter]
   end
 
   post '/username' do
