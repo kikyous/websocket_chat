@@ -72,6 +72,10 @@ class Channel < EM::Channel
       @@channels[channel] ||= new(channel)
     end
 
+    def find channel
+      @@channels[channel] || new(channel)
+    end
+
     def public
       @@channels.reject{|key,value| key.start_with? '_'}
     end
@@ -94,7 +98,7 @@ class App < Sinatra::Base
     session[:channel] = channel
     session[:name] ||= "guest#{rand(10000..99999)}"
 
-    @channel=Channel.find_or_init(channel)
+    @channel=Channel.find channel
     slim :index
   end
 
@@ -102,7 +106,7 @@ class App < Sinatra::Base
     channel = name
     session[:channel] = channel
 
-    @channel = Channel.find_or_init channel
+    @channel=Channel.find channel
     slim :index
   end
 
