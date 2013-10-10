@@ -27,6 +27,7 @@ EventMachine.run do
 
       ws.onclose {
         channel.unsubscribe(sid)
+        channel.gc
       }
     }
 

@@ -56,7 +56,15 @@ class Channel < EM::Channel
   end
 
   def to_s
-    "#{name}(#{@subs.length}人在线)"
+    "#{name}(#{size}人在线)"
+  end
+
+  def size
+    @subs.length
+  end
+
+  def gc
+    @@channels.delete(name) if size == 0
   end
 
   class << self
