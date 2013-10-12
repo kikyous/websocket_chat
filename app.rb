@@ -7,12 +7,7 @@ require 'nokogiri'
 require 'em-websocket'
 require './lib/uri'
 require './lib/uploader'
-require "sinatra/activerecord"
 require 'carrierwave'
-require 'carrierwave/orm/activerecord'
-require './model/message'
-
-require 'pry'
 
 COOKIE_KEY = 'rack.session'
 COOKIE_SECRET = '*&(^B234312341234'
@@ -64,7 +59,7 @@ class Channel < EM::Channel
   end
 
   def gc
-    @@channels.delete(name) if size == 0
+    @@channels.delete(name) if size==0 && name!='/'
   end
 
   class << self
@@ -85,8 +80,8 @@ class Channel < EM::Channel
 end
 
 class App < Sinatra::Base
-  register Sinatra::ActiveRecordExtension
-  set :database, "sqlite3:///app.sqlite3"
+  # register Sinatra::ActiveRecordExtension
+  # set :database, "sqlite3:///app.sqlite3"
   enable :logging
   use Rack::Session::Cookie,  :key => COOKIE_KEY,
     :path => '/',
